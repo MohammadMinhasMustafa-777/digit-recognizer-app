@@ -6,7 +6,7 @@ import io
 import base64
 
 app = Flask(__name__)
-model = load_model('best_mnist_model.h5')
+model = load_model('best_mnist_model')
 
 @app.route('/')
 def index():
@@ -41,5 +41,5 @@ def predict():
     
     return jsonify({'digit': digit, 'confidence': round(confidence, 4)})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=7860)

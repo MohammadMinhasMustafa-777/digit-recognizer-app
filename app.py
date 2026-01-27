@@ -1,12 +1,26 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
-from keras.models import load_model  # ← this fixed import
+from huggingface_hub import hf_hub_download
+from tensorflow.keras.models import load_model
 from PIL import Image
 import io
 import base64
 
-app = Flask(__name__)
-model = load_model('best_mnist_model')
+import os
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(os.path.dirname(__file__), "templates")
+)
+
+
+MODEL_PATH = hf_hub_download(
+    repo_id="MohammadMinhasMustafa/best-mnist-model",
+    filename="best_mnist_model.keras"
+)
+
+model = load_model(MODEL_PATH)
+
 
 @app.route('/')
 def index():

@@ -11,7 +11,7 @@ A simple Flask web app that allows users to draw a handwritten digit (0-9) on a 
 ## Setup & Local Run
 1. Install dependencies: `pip install -r requirements.txt`
 2. Run: `python app.py`
-3. Open: http://127.0.0.1:5000
+3. Open: https://mohammadminhasmustafa-digit-recognizer-flask.hf.space/
 4. Draw a digit → Predict
 
 ## Technologies

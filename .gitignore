@@ -1,0 +1,19 @@
+# Ignore everything outside this project
+../
+../../
+
+# Python
+__pycache__/
+*.pyc
+
+# Models
+*.h5
+*.pkl
+*.pt
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Env
+.venv/
+.env

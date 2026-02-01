@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Digit Recognizer</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f0f0f0; }
+        canvas { border: 3px solid #333; background: black; cursor: crosshair; }
+        #result { font-size: 32px; margin: 20px; }
+        button { padding: 10px 20px; font-size: 18px; margin: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Draw a Digit (0-9)</h1>
+    <canvas id="canvas" width="280" height="280"></canvas>
+    <br>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="predict()">Predict</button>
+
+    <div id="result">Result will appear here</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        // Set drawing style
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            drawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            e.preventDefault();  // Prevent scrolling on mobile
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('result').innerHTML = "Result will appear here";
+        }
+
+        async function predict() {
+            // Get image data from canvas
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Send to Flask backend
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: dataURL })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerHTML = 
+                `Predicted Digit: <strong>${result.digit}</strong><br>
+                 Confidence: <strong>${(result.confidence * 100).toFixed(2)}%</strong>`;
+        }
+    </script>
+</body>
+</html>
